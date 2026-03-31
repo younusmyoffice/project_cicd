@@ -77,7 +77,7 @@ server.on("error", (err) => {
       `Port ${PORT} is already in use. Stop the other process or set PORT to another value.`
     );
   } else {
-    console.error("Server failed to start:", err.message);
+    console.error("Server failed to start node server:", err.message);
   }
   process.exit(1);
 });

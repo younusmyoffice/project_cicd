@@ -8,6 +8,8 @@ services:
     plan: free
     region: oregon
     branch: main
+    # Required for push-to-deploy when using Blueprint / IaC (see Render blueprint spec).
+    autoDeployTrigger: commit
     buildCommand: npm ci
     startCommand: npm start
     healthCheckPath: /health
