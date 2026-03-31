@@ -1,3 +1,9 @@
+# CI runs on every push/PR. Render deploy: connect the repo in the Render dashboard
+# (auto-deploy on push) and/or add secret RENDER_DEPLOY_HOOK_URL to trigger a deploy after CI.
+#
+# VPS + SSH: enable repo variable VPS_DEPLOY_ENABLED=true (Settings → Variables → Actions)
+# and add VPS_* secrets; see deploy-vps.yml.
+
 name: CI
 
 on:
@@ -5,6 +11,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   verify:
@@ -22,3 +29,14 @@ jobs:
 
       - name: Check server syntax
         run: node --check server.js
+
+  deploy-render:
+    needs: verify
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render deploy hook
+        if: ${{ secrets.RENDER_DEPLOY_HOOK_URL != '' }}
+        env:
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: curl -fsS -X POST "$HOOK"

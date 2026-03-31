@@ -1,6 +1,6 @@
 const http = require("http");
 
-const PORT = Number(process.env.PORT) || 3000;
+const PORT = Number(process.env.PORT) || 3001;
 
 const server = http.createServer((req, res) => {
   const path = req.url.split("?")[0];
@@ -33,6 +33,19 @@ const server = http.createServer((req, res) => {
   res.end(JSON.stringify({ ok: false, error: "Not found" }));
 });
 
-server.listen(PORT, () => {
-  console.log(`Listening on http://localhost:${PORT}`);
+server.on("error", (err) => {
+  if (err.code === "EADDRINUSE") {
+    console.error(
+      `Port ${PORT} is already in use. Stop the other process or set PORT to another value.`
+    );
+  } else {
+    console.error("Server failed to start:", err.message);
+  }
+  process.exit(1);
+});
+
+const HOST = process.env.HOST || "0.0.0.0";
+
+server.listen(PORT, HOST, () => {
+  console.log(`Listening on http://${HOST}:${PORT}`);
 });
