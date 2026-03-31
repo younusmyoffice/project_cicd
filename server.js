@@ -56,6 +56,17 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (path === "/data" && req.method === "GET") {
+    res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+    res.end(
+      JSON.stringify({
+        ok: true,
+        message: "this is a cicd server message",
+      })
+    );
+    return;
+  }
+
   res.writeHead(404, { "Content-Type": "application/json; charset=utf-8" });
   res.end(JSON.stringify({ ok: false, error: "Not found" }));
 });
