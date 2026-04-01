@@ -66,7 +66,45 @@ const server = http.createServer((req, res) => {
     );
     return;
   }
-
+  if (path === "/api/sum" && req.method === "GET") {
+    const url = new URL(req.url, `http://localhost`);
+    const rawA = 2;
+    const rawB = 4;
+    if (rawA === null || rawB === null || rawA === "" || rawB === "") {
+      res.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(
+        JSON.stringify({
+          ok: false,
+          error:
+            "Missing a or b. Use: /api/sum?a=3&b=5",
+        })
+      );
+      return;
+    }
+    const a = Number(rawA);
+    const b = Number(rawB);
+    if (!Number.isFinite(a) || !Number.isFinite(b)) {
+      res.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(
+        JSON.stringify({
+          ok: false,
+          error: "a and b must be valid numbers",
+        })
+      );
+      return;
+    }
+    const result = a + b;
+    res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+    res.end(
+      JSON.stringify({
+        ok: true,
+        a,
+        b,
+        result,
+      })
+    );
+    return;
+  }
   res.writeHead(404, { "Content-Type": "application/json; charset=utf-8" });
   res.end(JSON.stringify({ ok: false, error: "Not found" }));
 });
